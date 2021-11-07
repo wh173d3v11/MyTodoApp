@@ -2,4 +2,17 @@
     <string name="app_name">My Todo App</string>
 
     <string name="add_button">Add Button</string>
+    <string name="search_tasks">Search Tasks</string>
+    <string name="sort_task">Sort Tasks</string>
+    <string name="delete_all">Delete All</string>
+    <string name="search_icon">Search Icon</string>
+    <string name="close_icon">Close</string>
+    <string name="no_content_found">No Tasks Found</string>
+    <string name="add_new_task">Add Task</string>
+    <string name="back_action">Back Action</string>
+    <string name="delete_action">Back Action</string>
+    <string name="update_action">Back Action</string>
+    <string name="arrow_dropdown">Arrow Drop Down</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
 </resources>
