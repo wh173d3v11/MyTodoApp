@@ -7,9 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.mytodoapp.data.models.Priority
 import com.example.mytodoapp.data.models.ToDoTask
 import com.example.mytodoapp.data.repo.ToDoRepo
+import com.example.mytodoapp.util.Action
+import com.example.mytodoapp.util.Constants.MAX_DESCRIPTION_LENGTH
+import com.example.mytodoapp.util.Constants.MAX_TITLE_LENGTH
 import com.example.mytodoapp.util.RequestState
 import com.example.mytodoapp.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -19,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(private val repo: ToDoRepo) : ViewModel() {
-
+    val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
     val id: MutableState<Int> = mutableStateOf(-1)
     val title: MutableState<String> = mutableStateOf("")
     val description: MutableState<String> = mutableStateOf("")
@@ -51,6 +55,63 @@ class SharedViewModel @Inject constructor(private val repo: ToDoRepo) : ViewMode
         }
     }
 
+    private fun addTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val toDoTask = ToDoTask(
+                title = title.value,
+                description = description.value, priority = priority.value
+            )
+            repo.addTask(toDoTask = toDoTask)
+        }
+    }
+
+    private fun updateTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val toDoTask = ToDoTask(
+                id = id.value,
+                title = title.value,
+                description = description.value, priority = priority.value
+            )
+            repo.updateTask(toDoTask = toDoTask)
+        }
+    }
+
+
+    private fun deleteTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val toDoTask = ToDoTask(
+                id = id.value,
+                title = title.value,
+                description = description.value, priority = priority.value
+            )
+            repo.deleteTask(toDoTask = toDoTask)
+        }
+    }
+
+    fun handleDBActions(action: Action) {
+        when (action) {
+            Action.ADD -> {
+                addTask()
+            }
+            Action.UPDATE -> {
+                updateTask()
+            }
+            Action.DELETE -> {
+                deleteTask()
+            }
+            Action.DELETE_ALL -> {
+
+            }
+            Action.UNDO -> {
+
+            }
+            else -> {
+
+            }
+        }
+        this.action.value = Action.NO_ACTION
+    }
+
     fun getSelectedTask(taskId: Int?) {
         if (taskId == -1 || taskId == null) {
             _selectedTask.value = null
@@ -68,6 +129,18 @@ class SharedViewModel @Inject constructor(private val repo: ToDoRepo) : ViewMode
         title.value = selectedTask?.title ?: ""
         description.value = selectedTask?.description ?: ""
         priority.value = selectedTask?.priority ?: Priority.LOW
+    }
+
+    fun updateTitle(newTitle: String) {
+        if (newTitle.length < MAX_TITLE_LENGTH) title.value = newTitle
+    }
+
+    fun updateDescription(it: String) {
+        if (it.length < MAX_DESCRIPTION_LENGTH) description.value = it
+    }
+
+    fun validateFields(): Boolean {
+        return title.value.isNotEmpty() && description.value.isNotEmpty()
     }
 
 

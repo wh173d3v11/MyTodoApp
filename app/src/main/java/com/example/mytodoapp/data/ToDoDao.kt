@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ToDoDao {
 
-    @Query("SELECT * FROM todo_table ORDER BY ID ASC")
+    @Query("SELECT * FROM todo_table ORDER BY ID DESC")
     fun getAllTasks(): Flow<List<ToDoTask>> //Flow is already run in async and coroutines... so we not added suspend
 
     @Query("SELECT * FROM todo_table WHERE id=:taskId")
